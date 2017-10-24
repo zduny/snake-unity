@@ -36,6 +36,16 @@ namespace Utils
             return !(first == second);
         }
 
+        public static IntVector2 operator +(IntVector2 first, IntVector2 second)
+        {
+            return new IntVector2(first.x + second.x, first.y + second.y);
+        }
+
+        public static implicit operator IntVector2(Vector2 v)
+        {
+            return new IntVector2((int)Mathf.Round(v.x), (int)Mathf.Round(v.y));
+        }
+
         public static int ManhattanDistance(IntVector2 first, IntVector2 second)
         {
             var dx = second.x - first.x;
