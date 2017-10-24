@@ -119,6 +119,9 @@ public class Game : MonoBehaviour
 
         // Creates snake
         snake = new Snake(Board);
+
+        // Pause the game
+        Paused = true;
     }
 
     // Update is called once per frame

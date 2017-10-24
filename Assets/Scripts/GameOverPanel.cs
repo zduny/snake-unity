@@ -34,7 +34,7 @@ public class GameOverPanel : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         textScore = transform.Find("Score").GetComponent<Text>();
         textPrefix = textScore.text;
