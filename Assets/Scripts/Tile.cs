@@ -35,6 +35,10 @@ public class Tile : MonoBehaviour
     /// </summary>
     public Sprite SnakesL;
     /// <summary>
+    /// Sprite for snake's L bulged shape
+    /// </summary>
+    public Sprite SnakesLBulged;
+    /// <summary>
     /// List of sprites representing bonus fruit (10 points fruit).
     /// </summary>
     public List<Sprite> Bonuses;
@@ -103,6 +107,9 @@ public class Tile : MonoBehaviour
                 case TileContent.SnakesL:
                     image.sprite = SnakesL;
                     break;
+                case TileContent.SnakesLBulged:
+                    image.sprite = SnakesLBulged;
+                    break;
             }
             lastUsedImage = image.sprite;
         }
@@ -122,7 +129,7 @@ public class Tile : MonoBehaviour
         set
         {
             _zRotation = value;
-            //transform.rotation = Quaternion.Euler(0, 0, value);
+            transform.rotation = Quaternion.Euler(0, 0, value);
         }
     }
 

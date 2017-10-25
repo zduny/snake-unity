@@ -79,8 +79,9 @@ public class Snake : IEnumerable<IntVector2>
         {
             var position = new IntVector2(start.x, start.y - i);
             body.AddLast(position);
-            board[position].Content = TileContent.SnakesBody;
         }
+
+        UpdateSnakeState();
     }
 
     /// <summary>
@@ -100,29 +101,131 @@ public class Snake : IEnumerable<IntVector2>
         else
         {
             bulges.Remove(body.First.Value);
+            board[body.First.Value].Content = TileContent.Empty;
             body.RemoveFirst();
         }
 
-        var tile = board[newHead];
+        UpdateSnakeState();
+    }
+
+    /// <summary>
+    /// Updates snake to display correctly
+    /// </summary>
+    private void UpdateSnakeState()
+    {
+        // Handle head
+        var headPosition = body.Last.Value;
+        var nextPosition = body.Last.Previous.Value;
+
+        var tile = board[headPosition];
         tile.Content = TileContent.SnakesHead;
-        if (direction == Vector2.up)
+
+        if (nextPosition.y > headPosition.y)
         {
             tile.ZRotation = 0;
         }
-        else if (direction == Vector2.down)
+        else if (nextPosition.y < headPosition.y)
         {
             tile.ZRotation = 180;
         }
-        else if (direction == Vector2.left)
-        {
-            tile.ZRotation = -90;
-        }
-        else if (direction == Vector2.right)
+        else if (nextPosition.x > headPosition.x)
         {
             tile.ZRotation = 90;
         }
+        else if (nextPosition.x < headPosition.x)
+        {
+            tile.ZRotation = -90;
+        }
 
-        var last = body.Last;
+        // Handle middle section
+        var previous = body.Last;
+        var current = body.Last.Previous;
+        while (current != body.First)
+        {
+            var next = current.Previous;
+            tile = board[current.Value];
+            if (previous.Value.x == next.Value.x)
+            {
+                if (bulges.Contains(current.Value))
+                {
+                    tile.Content = TileContent.SnakesBulge;
+                }
+                else
+                {
+                    tile.Content = TileContent.SnakesBody;
+                }
+                tile.ZRotation = 0;
+            }
+            else if (previous.Value.y == next.Value.y)
+            {
+                if (bulges.Contains(current.Value))
+                {
+                    tile.Content = TileContent.SnakesBulge;
+                }
+                else
+                {
+                    tile.Content = TileContent.SnakesBody;
+                }
+                tile.ZRotation = 90;
+            }
+            else
+            {
+                if (bulges.Contains(current.Value))
+                {
+                    tile.Content = TileContent.SnakesLBulged;
+                }
+                else
+                {
+                    tile.Content = TileContent.SnakesL;
+                }
+                if ((previous.Value.x > current.Value.x && next.Value.y < current.Value.y) || (next.Value.x > current.Value.x && previous.Value.y < current.Value.y))
+                {
+                    tile.ZRotation = 0;
+                }
+                else if ((previous.Value.x < current.Value.x && next.Value.y < current.Value.y) || (next.Value.x < current.Value.x && previous.Value.y < current.Value.y))
+                {
+                    tile.ZRotation = 90;
+                }
+                else if ((previous.Value.x < current.Value.x && next.Value.y > current.Value.y) || (next.Value.x < current.Value.x && previous.Value.y > current.Value.y))
+                {
+                    tile.ZRotation = 180;
+                }
+                else if ((previous.Value.x > current.Value.x && next.Value.y > current.Value.y) || (next.Value.x > current.Value.x && previous.Value.y > current.Value.y))
+                {
+                    tile.ZRotation = 270;
+                }
+                else
+                {
+                    tile.Content = TileContent.SnakesHead;
+                }
+            }
+            previous = current;
+            current = current.Previous;
+        }
+
+        // Handle tail
+        var tailPosition = body.First.Value;
+        var previousPosition = body.First.Next.Value;
+
+        tile = board[tailPosition];
+        tile.Content = TileContent.SnakesTail;
+
+        if (previousPosition.y > tailPosition.y)
+        {
+            tile.ZRotation = 0;
+        }
+        else if (previousPosition.y < tailPosition.y)
+        {
+            tile.ZRotation = 180;
+        }
+        else if (previousPosition.x > tailPosition.x)
+        {
+            tile.ZRotation = 90;
+        }
+        else if (previousPosition.x < tailPosition.x)
+        {
+            tile.ZRotation = -90;
+        }
     }
 
     /// <summary>

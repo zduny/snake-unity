@@ -279,11 +279,12 @@ public class Game : MonoBehaviour
             Board[applePosition].Content = TileContent.Empty;
         }
 
-        applePosition = Board.EmptyPositions.ToList().RandomElement();
-        if (applePosition == null)
+        var emptyPositions = Board.EmptyPositions.ToList();
+        if (emptyPositions.Count == 0)
         {
             return;
         }
+        applePosition = emptyPositions.RandomElement();
         Board[applePosition].Content = TileContent.Apple;
     }
 
@@ -298,11 +299,12 @@ public class Game : MonoBehaviour
         yield return new WaitForSeconds(Random.Range(GameSpeed * 20, GameSpeed * 40));
 
         // Put a bonus on a board at a random place
-        bonusPosition = Board.EmptyPositions.ToList().RandomElement();
-        if (bonusPosition == null)
+        var emptyPositions = Board.EmptyPositions.ToList();
+        if (emptyPositions.Count == 0)
         {
             yield break;
         }
+        bonusPosition = emptyPositions.RandomElement();
         Board[bonusPosition].Content = TileContent.Bonus;
         bonusActive = true;
 

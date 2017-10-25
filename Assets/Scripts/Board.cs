@@ -99,7 +99,7 @@ public class Board : MonoBehaviour, IEnumerable<Tile>
             x = Margins;
             for (int j = 0; j < Columns; j++)
             {
-                var tile = Instantiate(TilePrefab, new Vector3(x, -y, 0), Quaternion.identity).GetComponent<Tile>();
+                var tile = Instantiate(TilePrefab, new Vector3(x + halfTileSize, -y - halfTileSize, 0), Quaternion.identity).GetComponent<Tile>();
                 tile.transform.SetParent(rectTransform, false);
                 tile.RectTransform.sizeDelta = new Vector2(tileSize, tileSize);
                 tiles.Add(tile);
