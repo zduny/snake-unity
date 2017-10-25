@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Utils;
 
-public class Controller : MonoBehaviour {
+public class Controller : MonoBehaviour
+{
     /// <summary>
     /// Last direction that was in the queue.
     /// </summary>
-    private IntVector2 lastDirection;
+    private IntVector2 _lastDirection;
 
     /// <summary>
     /// Queue of direction change commands.
@@ -23,37 +24,81 @@ public class Controller : MonoBehaviour {
         get
         {
             if (queue.Count == 0)
-                return lastDirection;
+                return _lastDirection;
 
             return queue.Last.Value;
         }
     }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         Reset();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // Keyboard controls
         if (Input.GetKeyDown("up") && LastDirection != Vector2.down)
         {
             Enqueue(Vector2.up);
         }
-
-        if (Input.GetKeyDown("down") && LastDirection != Vector2.up)
+        else if (Input.GetKeyDown("down") && LastDirection != Vector2.up)
         {
             Enqueue(Vector2.down);
         }
-
-        if (Input.GetKeyDown("left") && LastDirection != Vector2.right)
+        else if (Input.GetKeyDown("left") && LastDirection != Vector2.right)
         {
             Enqueue(Vector2.left);
         }
-
-        if (Input.GetKeyDown("right") && LastDirection != Vector2.left)
+        else if (Input.GetKeyDown("right") && LastDirection != Vector2.left)
         {
             Enqueue(Vector2.right);
+        }
+
+        // Mouse (and touch) controls
+        if (Input.GetMouseButtonDown(0))
+        {
+            var position = Input.mousePosition;
+            if (position.x < Screen.width / 2)
+            {
+                if (LastDirection == Vector2.up)
+                {
+                    Enqueue(Vector2.left);
+                }
+                else if (LastDirection == Vector2.down)
+                {
+                    Enqueue(Vector2.right);
+                }
+                else if (LastDirection == Vector2.left)
+                {
+                    Enqueue(Vector2.down);
+                }
+                else if (LastDirection == Vector2.right)
+                {
+                    Enqueue(Vector2.up);
+                }
+            }
+            else
+            {
+                if (LastDirection == Vector2.up)
+                {
+                    Enqueue(Vector2.right);
+                }
+                else if (LastDirection == Vector2.down)
+                {
+                    Enqueue(Vector2.left);
+                }
+                else if (LastDirection == Vector2.left)
+                {
+                    Enqueue(Vector2.up);
+                }
+                else if (LastDirection == Vector2.right)
+                {
+                    Enqueue(Vector2.down);
+                }
+            }
         }
     }
 
@@ -64,7 +109,7 @@ public class Controller : MonoBehaviour {
     private void Enqueue(IntVector2 direction)
     {
         queue.AddLast(direction);
-        lastDirection = direction;
+        _lastDirection = direction;
     }
 
     /// <summary>
@@ -74,7 +119,7 @@ public class Controller : MonoBehaviour {
     public IntVector2 NextDirection()
     {
         if (queue.Count == 0)
-            return lastDirection;
+            return _lastDirection;
 
         var first = queue.First.Value;
         queue.RemoveFirst();

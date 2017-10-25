@@ -11,6 +11,11 @@ public class Game : MonoBehaviour
     /// </summary>
     private float time;
 
+    /// <summary>
+    /// Holds last started bonus placing coroutine
+    /// </summary>
+    private IEnumerator bonusCoroutine;
+
     private Snake snake;
 
     /// <summary>
@@ -167,6 +172,12 @@ public class Game : MonoBehaviour
                     Score += 1;
                     PlantAnApple();
                 }
+                else if (head == bonusPosition && bonusActive)
+                {
+                    Score += 10;
+                    StopCoroutine(bonusCoroutine);
+                    PlantABonus();
+                }
                 else
                 {
                     snake.RemoveTail();
@@ -244,9 +255,22 @@ public class Game : MonoBehaviour
         // Plant an apple
         PlantAnApple();
 
+        // Start bonus coroutine
+        PlantABonus();
+
         // Start the game
         Paused = false;
         time = 0;
+    }
+
+    /// <summary>
+    /// Starts bonus placing coroutine
+    /// </summary>
+    private void PlantABonus()
+    {
+        bonusActive = false;
+        bonusCoroutine = BonusCoroutine();
+        StartCoroutine(bonusCoroutine);
     }
 
     /// <summary>
@@ -260,7 +284,50 @@ public class Game : MonoBehaviour
         }
 
         applePosition = Board.EmptyPositions.ToList().RandomElement();
+        if (applePosition == null)
+        {
+            return;
+        }
         Board[applePosition].Content = TileContent.Apple;
+    }
+
+    /// <summary>
+    /// Couroutine responsible for placing and removing bonus from the board.
+    /// It waits for a random period of time, puts the bonus on the board, and then removes it after constant delay.
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator BonusCoroutine()
+    {
+        // Wait for a random period of time
+        yield return new WaitForSeconds(Random.Range(GameSpeed * 20, GameSpeed * 40));
+
+        // Put a bonus on a board at a random place
+        bonusPosition = Board.EmptyPositions.ToList().RandomElement();
+        if (bonusPosition == null)
+        {
+            yield break;
+        }
+        Board[bonusPosition].Content = TileContent.Bonus;
+        bonusActive = true;
+
+        // Wait
+        yield return new WaitForSeconds(GameSpeed * 16);
+
+        // Start bonus to blink
+        for (int i = 0; i < 5; i++)
+        {
+            Board[bonusPosition].ContentHidden = true;
+            yield return new WaitForSeconds(GameSpeed * 1.5f);
+            Board[bonusPosition].ContentHidden = false;
+            yield return new WaitForSeconds(GameSpeed * 1.5f);
+        }
+
+        // Remove a bonus and restart the coroutine
+        bonusActive = false;
+        Board[bonusPosition].Content = TileContent.Empty;
+
+        bonusCoroutine = BonusCoroutine();
+        yield return StartCoroutine(bonusCoroutine);
     }
 
     /// <summary>
@@ -269,6 +336,9 @@ public class Game : MonoBehaviour
     /// <returns></returns>
     private IEnumerator GameOverCoroutine()
     {
+        // Stop bonus coroutine
+        StopCoroutine(bonusCoroutine);
+
         // Pause the game
         Paused = true;
 
