@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Utils;
 
 public class Snake : IEnumerable<IntVector2>
@@ -8,7 +7,7 @@ public class Snake : IEnumerable<IntVector2>
     /// <summary>
     /// Queue holding snake's body parts positions.
     /// </summary>
-    private Queue<IntVector2> body;
+    private LinkedList<IntVector2> body;
 
     /// <summary>
     /// Game board.
@@ -22,14 +21,14 @@ public class Snake : IEnumerable<IntVector2>
     {
         get
         {
-            return body.Last();
+            return body.Last.Value;
         }
     }
 
     public Snake(Board board)
     {
         this.board = board;
-        body = new Queue<IntVector2>();
+        body = new LinkedList<IntVector2>();
         Reset();
     }
 
@@ -71,7 +70,7 @@ public class Snake : IEnumerable<IntVector2>
         for (int i = 0; i < 5; i++)
         {
             var position = new IntVector2(start.x, start.y - i);
-            body.Enqueue(position);
+            body.AddLast(position);
             board[position].Content = TileContent.Snake;
         }
     }
@@ -82,7 +81,7 @@ public class Snake : IEnumerable<IntVector2>
     /// <param name="head">new head's position</param>
     public void AddHead(IntVector2 head)
     {
-        body.Enqueue(head);
+        body.AddLast(head);
         board[head].Content = TileContent.Snake;
     }
 
@@ -92,7 +91,8 @@ public class Snake : IEnumerable<IntVector2>
     /// <returns>last tail position</returns>
     public IntVector2 RemoveTail()
     {
-        var tail = body.Dequeue();
+        var tail = body.First.Value;
+        body.RemoveFirst();
         board[tail].Content = TileContent.Empty;
 
         return tail;

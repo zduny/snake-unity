@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Utils;
 
@@ -14,7 +13,7 @@ public class Controller : MonoBehaviour {
     /// <summary>
     /// Queue of direction change commands.
     /// </summary>
-    public Queue<IntVector2> queue;
+    public LinkedList<IntVector2> queue;
 
     /// <summary>
     /// Specyfies snake's current moving direction.
@@ -26,7 +25,7 @@ public class Controller : MonoBehaviour {
             if (queue.Count == 0)
                 return lastDirection;
 
-            return queue.Last();
+            return queue.Last.Value;
         }
     }
 
@@ -39,23 +38,33 @@ public class Controller : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown("up") && LastDirection != Vector2.down)
         {
-            queue.Enqueue(Vector2.up);
+            Enqueue(Vector2.up);
         }
 
         if (Input.GetKeyDown("down") && LastDirection != Vector2.up)
         {
-            queue.Enqueue(Vector2.down);
+            Enqueue(Vector2.down);
         }
 
         if (Input.GetKeyDown("left") && LastDirection != Vector2.right)
         {
-            queue.Enqueue(Vector2.left);
+            Enqueue(Vector2.left);
         }
 
         if (Input.GetKeyDown("right") && LastDirection != Vector2.left)
         {
-            queue.Enqueue(Vector2.right);
+            Enqueue(Vector2.right);
         }
+    }
+
+    /// <summary>
+    /// Enqueues next direction change command.
+    /// </summary>
+    /// <param name="up"></param>
+    private void Enqueue(IntVector2 direction)
+    {
+        queue.AddLast(direction);
+        lastDirection = direction;
     }
 
     /// <summary>
@@ -67,8 +76,10 @@ public class Controller : MonoBehaviour {
         if (queue.Count == 0)
             return lastDirection;
 
-        lastDirection = queue.Dequeue();
-        return lastDirection;
+        var first = queue.First.Value;
+        queue.RemoveFirst();
+
+        return first;
     }
 
     /// <summary>
@@ -76,8 +87,7 @@ public class Controller : MonoBehaviour {
     /// </summary>
     public void Reset()
     {
-        queue = new Queue<IntVector2>();
-        queue.Enqueue(Vector2.up);
-        lastDirection = Vector2.up;
+        queue = new LinkedList<IntVector2>();
+        Enqueue(Vector2.up);
     }
 }

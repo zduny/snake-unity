@@ -27,6 +27,12 @@ public class Tile : MonoBehaviour
     /// Image component of this GameObject.
     /// </summary>
     private Image image;
+
+    /// <summary>
+    /// Holds last displayed image.
+    /// </summary>
+    private Sprite lastUsedImage;
+
     private RectTransform _rectTransform;
     private TileContent _content;
     private bool _contentHidden;
@@ -69,6 +75,7 @@ public class Tile : MonoBehaviour
                     image.sprite = Snake;
                     break;
             }
+            lastUsedImage = image.sprite;
         }
     }
 
@@ -90,7 +97,7 @@ public class Tile : MonoBehaviour
             }
             else
             {
-                Content = Content;
+                image.sprite = lastUsedImage;
             }
         }
     }
