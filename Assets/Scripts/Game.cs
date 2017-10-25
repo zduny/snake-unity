@@ -147,11 +147,10 @@ public class Game : MonoBehaviour
     {
         if (!Paused && snake != null)
         {
-            var head = snake.Head;
             var dir = controller.NextDirection();
 
             // New head position
-            head += new IntVector2(dir.x, -dir.y);
+            var head = snake.NextHeadPosition(dir);
 
             var x = head.x;
             var y = head.y;
@@ -165,22 +164,22 @@ public class Game : MonoBehaviour
 
             if (x >= 0 && x < Board.Columns && y >= 0 && y < Board.Rows)
             {
-                snake.AddHead(head);
-
                 if (head == applePosition)
                 {
+                    snake.Move(dir, true);
                     Score += 1;
                     PlantAnApple();
                 }
                 else if (head == bonusPosition && bonusActive)
                 {
+                    snake.Move(dir, true);
                     Score += 10;
                     StopCoroutine(bonusCoroutine);
                     PlantABonus();
                 }
                 else
                 {
-                    snake.RemoveTail();
+                    snake.Move(dir, false);
                 }
             }
             else
@@ -244,10 +243,7 @@ public class Game : MonoBehaviour
         bonusActive = false;
 
         // Clear board
-        foreach (var tile in Board)
-        {
-            tile.Content = TileContent.Empty;
-        }
+        Board.Reset();
 
         // Resets snake
         snake.Reset();
@@ -283,11 +279,12 @@ public class Game : MonoBehaviour
             Board[applePosition].Content = TileContent.Empty;
         }
 
-        applePosition = Board.EmptyPositions.ToList().RandomElement();
-        if (applePosition == null)
+        var emptyPositions = Board.EmptyPositions.ToList();
+        if (emptyPositions.Count == 0)
         {
             return;
         }
+        applePosition = emptyPositions.RandomElement();
         Board[applePosition].Content = TileContent.Apple;
     }
 
@@ -302,11 +299,12 @@ public class Game : MonoBehaviour
         yield return new WaitForSeconds(Random.Range(GameSpeed * 20, GameSpeed * 40));
 
         // Put a bonus on a board at a random place
-        bonusPosition = Board.EmptyPositions.ToList().RandomElement();
-        if (bonusPosition == null)
+        var emptyPositions = Board.EmptyPositions.ToList();
+        if (emptyPositions.Count == 0)
         {
             yield break;
         }
+        bonusPosition = emptyPositions.RandomElement();
         Board[bonusPosition].Content = TileContent.Bonus;
         bonusActive = true;
 

@@ -15,9 +15,29 @@ public class Tile : MonoBehaviour
     /// </summary>
     public Sprite Apple;
     /// <summary>
-    /// Sprite for body of snake.
+    /// Sprite for head of snake.
     /// </summary>
-    public Sprite Snake;
+    public Sprite SnakesHead;
+    /// <summary>
+    /// Sprite for snake's body.
+    /// </summary>
+    public Sprite SnakesBody;
+    /// <summary>
+    /// Sprite for snake's tail.
+    /// </summary>
+    public Sprite SnakesTail;
+    /// <summary>
+    /// Sprite for snake's bulged body.
+    /// </summary>
+    public Sprite SnakesBulge;
+    /// <summary>
+    /// Sprite for snake's L shape
+    /// </summary>
+    public Sprite SnakesL;
+    /// <summary>
+    /// Sprite for snake's L bulged shape
+    /// </summary>
+    public Sprite SnakesLBulged;
     /// <summary>
     /// List of sprites representing bonus fruit (10 points fruit).
     /// </summary>
@@ -60,6 +80,7 @@ public class Tile : MonoBehaviour
         set
         {
             _content = value;
+            ZRotation = 0;
             switch (_content)
             {
                 case TileContent.Empty:
@@ -71,11 +92,44 @@ public class Tile : MonoBehaviour
                 case TileContent.Bonus:
                     image.sprite = Bonuses.RandomElement();
                     break;
-                case TileContent.Snake:
-                    image.sprite = Snake;
+                case TileContent.SnakesHead:
+                    image.sprite = SnakesHead;
+                    break;
+                case TileContent.SnakesBody:
+                    image.sprite = SnakesBody;
+                    break;
+                case TileContent.SnakesBulge:
+                    image.sprite = SnakesBulge;
+                    break;
+                case TileContent.SnakesTail:
+                    image.sprite = SnakesTail;
+                    break;
+                case TileContent.SnakesL:
+                    image.sprite = SnakesL;
+                    break;
+                case TileContent.SnakesLBulged:
+                    image.sprite = SnakesLBulged;
                     break;
             }
             lastUsedImage = image.sprite;
+        }
+    }
+
+    private float _zRotation = 0;
+
+    /// <summary>
+    /// Sets or gets tile's Z-rotation
+    /// </summary>
+    public float ZRotation
+    {
+        get
+        {
+            return _zRotation;
+        }
+        set
+        {
+            _zRotation = value;
+            transform.rotation = Quaternion.Euler(0, 0, value);
         }
     }
 
@@ -115,5 +169,13 @@ public class Tile : MonoBehaviour
     void Update()
     {
 
+    }
+
+    /// <summary>
+    /// Resets tile to original conditions.
+    /// </summary>
+    public void Reset()
+    {
+        Content = TileContent.Empty;
     }
 }
