@@ -147,11 +147,10 @@ public class Game : MonoBehaviour
     {
         if (!Paused && snake != null)
         {
-            var head = snake.Head;
             var dir = controller.NextDirection();
 
             // New head position
-            head += new IntVector2(dir.x, -dir.y);
+            var head = snake.NextHeadPosition(dir);
 
             var x = head.x;
             var y = head.y;
@@ -165,22 +164,22 @@ public class Game : MonoBehaviour
 
             if (x >= 0 && x < Board.Columns && y >= 0 && y < Board.Rows)
             {
-                snake.AddHead(head);
-
                 if (head == applePosition)
                 {
+                    snake.Move(dir, true);
                     Score += 1;
                     PlantAnApple();
                 }
                 else if (head == bonusPosition && bonusActive)
                 {
+                    snake.Move(dir, true);
                     Score += 10;
                     StopCoroutine(bonusCoroutine);
                     PlantABonus();
                 }
                 else
                 {
-                    snake.RemoveTail();
+                    snake.Move(dir, false);
                 }
             }
             else
@@ -244,10 +243,7 @@ public class Game : MonoBehaviour
         bonusActive = false;
 
         // Clear board
-        foreach (var tile in Board)
-        {
-            tile.Content = TileContent.Empty;
-        }
+        Board.Reset();
 
         // Resets snake
         snake.Reset();

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -82,6 +83,7 @@ public class Board : MonoBehaviour, IEnumerable<Tile>
         // Calculate tile size (assuming board always have to fit whole panel's width).
         var width = rectTransform.rect.width;
         var tileSize = (width - Margins * 2) / Columns;
+        var halfTileSize = tileSize / 2;
 
         // Change panel height to contain tiles.
         rectTransform.sizeDelta = new Vector2(width, tileSize * Rows + Margins * 2);
@@ -161,6 +163,17 @@ public class Board : MonoBehaviour, IEnumerable<Tile>
         get
         {
             return this[position.x, position.y];
+        }
+    }
+
+    /// <summary>
+    /// Resets board to original conditions.
+    /// </summary>
+    public void Reset()
+    {
+        foreach (var tile in this)
+        {
+            tile.Reset();
         }
     }
 }
