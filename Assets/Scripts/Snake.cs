@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Utils;
 
@@ -28,6 +29,17 @@ public class Snake : IEnumerable<IntVector2>
         get
         {
             return body.Last.Value;
+        }
+    }
+
+    /// <summary>
+    /// All body parts positions without last element.
+    /// </summary>
+    public IEnumerable<IntVector2> WithoutTail
+    {
+        get
+        {
+            return this.Where((p) => { return p != body.First.Value; });
         }
     }
 

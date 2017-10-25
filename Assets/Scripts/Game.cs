@@ -12,9 +12,14 @@ public class Game : MonoBehaviour
     private float time;
 
     /// <summary>
-    /// Holds last started bonus placing coroutine
+    /// Holds last started bonus placing coroutine.
     /// </summary>
     private IEnumerator bonusCoroutine;
+
+    /// <summary>
+    /// Object responisble for managing sound effects.
+    /// </summary>
+    private SoundManager soundManager;
 
     private Snake snake;
 
@@ -127,6 +132,9 @@ public class Game : MonoBehaviour
 
         // Pause the game
         Paused = true;
+
+        // Find sound manager
+        soundManager = GetComponent<SoundManager>();
     }
 
     // Update is called once per frame
@@ -155,7 +163,7 @@ public class Game : MonoBehaviour
             var x = head.x;
             var y = head.y;
 
-            if (snake.Contains(head))
+            if (snake.WithoutTail.Contains(head))
             {
                 // Snake has bitten its tail - game over
                 StartCoroutine(GameOverCoroutine());
@@ -166,12 +174,14 @@ public class Game : MonoBehaviour
             {
                 if (head == applePosition)
                 {
+                    soundManager.PlayAppleSoundEffect();
                     snake.Move(dir, true);
                     Score += 1;
                     PlantAnApple();
                 }
                 else if (head == bonusPosition && bonusActive)
                 {
+                    soundManager.PlayBonusSoundEffect();
                     snake.Move(dir, true);
                     Score += 10;
                     StopCoroutine(bonusCoroutine);
@@ -334,6 +344,9 @@ public class Game : MonoBehaviour
     /// <returns></returns>
     private IEnumerator GameOverCoroutine()
     {
+        // Play game over sound effect
+        soundManager.PlayGameOverSoundEffect();
+
         // Stop bonus coroutine
         StopCoroutine(bonusCoroutine);
 
