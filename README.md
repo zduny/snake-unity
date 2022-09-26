@@ -3,6 +3,8 @@ Snake game created using Unity engine.
 
 Download APK Android file [here](https://github.com/dzduniak/Snake-Unity/files/1418958/snake.zip).
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/O5O31JYZ4)
+
 ## how to open project in unity
 
 First you have to install Unity engine (try installing the newest version), remember to also install Android (or iOS) module.
